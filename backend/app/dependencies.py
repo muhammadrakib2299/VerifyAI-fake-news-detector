@@ -1,24 +1,26 @@
 """Shared dependencies — model loading and singleton access."""
 
-from .services.classifier import BaselineClassifier
-from pathlib import Path
+from .services.classifier import load_classifiers, classify_text
 
-_classifier = None
+_classifiers = None
 
 
 def load_model():
-    """Load the ML model at startup."""
-    global _classifier
-    model_path = Path(__file__).parent.parent / "ml" / "models" / "baseline_tfidf_logreg.joblib"
+    """Load all ML models at startup."""
+    global _classifiers
+    _classifiers = load_classifiers()
 
-    if model_path.exists():
-        _classifier = BaselineClassifier(str(model_path))
-        print(f"Model loaded from {model_path}")
-    else:
-        print(f"WARNING: Model not found at {model_path}. Run train_baseline.py first.")
-        _classifier = None
+    if _classifiers["primary"] is None:
+        print("WARNING: No classification model loaded. Run train_baseline.py or train_roberta.py first.")
 
 
 def get_classifier():
-    """Get the loaded classifier instance."""
-    return _classifier
+    """Get the loaded classifiers dict."""
+    return _classifiers
+
+
+def get_prediction(text: str) -> dict:
+    """Classify text using the best available model."""
+    if _classifiers is None:
+        raise RuntimeError("Models not loaded")
+    return classify_text(_classifiers, text)

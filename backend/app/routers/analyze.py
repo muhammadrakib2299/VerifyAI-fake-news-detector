@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, HTTPException
 from ..schemas import AnalyzeRequest, AnalyzeResponse
-from ..dependencies import get_classifier
+from ..dependencies import get_classifier, get_prediction
 
 router = APIRouter()
 
@@ -10,13 +10,13 @@ router = APIRouter()
 @router.post("/analyze", response_model=AnalyzeResponse)
 async def analyze(request: AnalyzeRequest):
     """Analyze text, URL, or claim for fake news."""
-    classifier = get_classifier()
+    classifiers = get_classifier()
 
-    if classifier is None:
+    if classifiers is None or classifiers.get("primary") is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
 
     try:
-        result = classifier.predict(request.content)
+        result = get_prediction(request.content)
         return AnalyzeResponse(
             verdict=result["verdict"],
             confidence=result["confidence"],
