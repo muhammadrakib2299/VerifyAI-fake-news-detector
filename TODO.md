@@ -29,12 +29,12 @@
 - [x] Save trained model with joblib
 
 ### RoBERTa Model
-- [ ] Create fine-tuning notebook (`03_roberta_finetuning.ipynb`)
-- [ ] Load and tokenize data with RoBERTa tokenizer
-- [ ] Fine-tune `roberta-base` using Hugging Face Trainer
-- [ ] Evaluate on test set — confusion matrix + classification report
-- [ ] Save model weights to `backend/ml/models/`
-- [ ] Verify model loads and runs inference correctly
+- [x] Create fine-tuning notebook (`03_roberta_finetuning.ipynb`)
+- [x] Load and tokenize data with RoBERTa tokenizer
+- [x] Fine-tune `roberta-base` using Hugging Face Trainer
+- [x] Evaluate on test set — confusion matrix + classification report
+- [x] Save model weights to `backend/ml/models/`
+- [x] Verify model loads and runs inference correctly
 
 ### Basic API
 - [ ] Create FastAPI app skeleton
