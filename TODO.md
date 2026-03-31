@@ -18,7 +18,7 @@
 - [x] Download LIAR dataset
 - [x] Download ISOT Fake News dataset
 - [x] Download FakeNewsNet dataset
-- [ ] Create data exploration notebook (`01_data_exploration.ipynb`)
+- [x] Create data exploration notebook (`01_data_exploration.ipynb`)
 - [ ] Clean and preprocess all datasets
 - [ ] Create unified train/val/test splits
 
