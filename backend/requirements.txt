@@ -22,6 +22,7 @@ vaderSentiment==3.3.2
 
 # Explainability
 lime==0.2.0.1
+anthropic==0.52.0
 
 # Web Scraping
 newspaper3k==0.2.8

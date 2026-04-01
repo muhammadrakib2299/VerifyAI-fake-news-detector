@@ -7,7 +7,7 @@ from .sentiment import analyze_sentiment
 from .credibility import check_credibility, check_credibility_from_domain
 from .scraper import scrape_article
 from .fact_checker import check_facts
-from .explainer import generate_lime_explanation
+from .explainer import generate_lime_explanation, generate_claude_explanation
 
 
 # Weighted scoring formula
@@ -85,6 +85,18 @@ async def run_pipeline(
     # Map to verdict
     verdict = _score_to_verdict(final_score)
 
+    # 6. Claude explanation (async, uses all analysis results)
+    claude_explanation = await generate_claude_explanation(
+        text=text_to_analyze,
+        verdict=verdict,
+        confidence=classification["confidence"],
+        classification=classification,
+        sentiment=sentiment,
+        credibility=credibility if credibility else {},
+        fact_check=fact_check,
+        highlights=explainability.get("highlights", []),
+    )
+
     return {
         "id": analysis_id,
         "verdict": verdict,
@@ -126,7 +138,7 @@ async def run_pipeline(
         },
         "explainability": {
             "highlights": explainability.get("highlights", []),
-            "explanation": None,  # Populated by Claude API in task 2
+            "explanation": claude_explanation,
             "method": explainability.get("method", "lime"),
             "available": explainability.get("available", False),
         },
