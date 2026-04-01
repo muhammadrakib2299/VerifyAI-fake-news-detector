@@ -8,6 +8,7 @@ import { ScoreBreakdown } from "@/components/score-breakdown";
 import { SentimentDisplay } from "@/components/sentiment-display";
 import { CredibilityBadge } from "@/components/credibility-badge";
 import { FactCheckSection } from "@/components/fact-check-section";
+import { ExplainabilityReport } from "@/components/explainability-report";
 import { Button } from "@/components/ui/button";
 
 export default function ResultsPage() {
@@ -100,6 +101,16 @@ export default function ResultsPage() {
       {result.fact_check.has_matches && (
         <div className="mt-8">
           <FactCheckSection factCheck={result.fact_check} />
+        </div>
+      )}
+
+      {/* Explainability Report */}
+      {result.explainability && (
+        <div className="mt-8">
+          <ExplainabilityReport
+            explainability={result.explainability}
+            analyzedText={result.analyzed_text}
+          />
         </div>
       )}
 

@@ -56,6 +56,19 @@ export interface ArticleInfo {
   source_domain: string | null;
 }
 
+export interface Highlight {
+  text: string;
+  weight: number;
+  signal: "fake" | "real";
+}
+
+export interface ExplainabilityResult {
+  highlights: Highlight[];
+  explanation: string | null;
+  method: string;
+  available: boolean;
+}
+
 export interface AnalyzeResponse {
   id: string;
   verdict: "Real" | "Misleading" | "Fake";
@@ -71,6 +84,7 @@ export interface AnalyzeResponse {
   credibility: CredibilityResult;
   fact_check: FactCheckResult;
   article_info: ArticleInfo | null;
+  explainability: ExplainabilityResult | null;
 }
 
 export interface AnalysisSummary {
