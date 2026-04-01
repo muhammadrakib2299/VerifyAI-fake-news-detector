@@ -8,6 +8,7 @@ from ..schemas import (
     HistoryResponse, FeedbackRequest, FeedbackResponse,
     ClassificationResult, SentimentResult, CredibilityResult,
     FactCheckResult, FactCheckMatch, ArticleInfo,
+    ExplainabilityResult, Highlight,
 )
 from ..dependencies import get_classifier
 from ..database import get_db
@@ -46,6 +47,7 @@ async def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)):
             sentiment_data=result["sentiment"],
             credibility_data=result["credibility"],
             fact_check_data=result["fact_check"],
+            explainability_data=result.get("explainability"),
             article_info=result.get("article_info"),
             analyzed_text=result.get("analyzed_text"),
         )
@@ -169,6 +171,19 @@ def _build_response(result: dict) -> AnalyzeResponse:
             api_available=fact_check.get("api_available", False),
         ),
         article_info=ArticleInfo(**result["article_info"]) if result.get("article_info") else None,
+        explainability=_build_explainability(result.get("explainability")),
+    )
+
+
+def _build_explainability(data: dict | None) -> ExplainabilityResult | None:
+    """Build ExplainabilityResult from pipeline or DB data."""
+    if not data:
+        return None
+    return ExplainabilityResult(
+        highlights=[Highlight(**h) for h in data.get("highlights", [])],
+        explanation=data.get("explanation"),
+        method=data.get("method", "lime"),
+        available=data.get("available", False),
     )
 
 
@@ -178,6 +193,7 @@ def _build_response_from_db(analysis: Analysis) -> AnalyzeResponse:
     sent = analysis.sentiment_data or {}
     cred = analysis.credibility_data or {}
     fc = analysis.fact_check_data or {}
+    expl = analysis.explainability_data or {}
     art = analysis.article_info or {}
 
     return AnalyzeResponse(
@@ -219,4 +235,5 @@ def _build_response_from_db(analysis: Analysis) -> AnalyzeResponse:
             api_available=fc.get("api_available", False),
         ),
         article_info=ArticleInfo(**art) if art and art.get("title") else None,
+        explainability=_build_explainability(expl if expl else None),
     )

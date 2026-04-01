@@ -75,6 +75,19 @@ class ArticleInfo(BaseModel):
     source_domain: Optional[str] = None
 
 
+class Highlight(BaseModel):
+    text: str
+    weight: float
+    signal: str  # "fake" or "real"
+
+
+class ExplainabilityResult(BaseModel):
+    highlights: list[Highlight] = []
+    explanation: Optional[str] = None  # Claude-generated natural language explanation
+    method: str = "lime"
+    available: bool = False
+
+
 # --- Main response ---
 
 class AnalyzeResponse(BaseModel):
@@ -94,6 +107,7 @@ class AnalyzeResponse(BaseModel):
     credibility: CredibilityResult
     fact_check: FactCheckResult
     article_info: Optional[ArticleInfo] = None
+    explainability: Optional[ExplainabilityResult] = None
 
 
 class AnalysisSummary(BaseModel):

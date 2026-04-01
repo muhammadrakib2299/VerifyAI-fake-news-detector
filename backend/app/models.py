@@ -30,6 +30,7 @@ class Analysis(Base):
     sentiment_data = Column(JSON, nullable=True)
     credibility_data = Column(JSON, nullable=True)
     fact_check_data = Column(JSON, nullable=True)
+    explainability_data = Column(JSON, nullable=True)
     article_info = Column(JSON, nullable=True)
 
     # Analyzed text (may differ from input if URL was scraped)
@@ -53,6 +54,7 @@ class Analysis(Base):
             "sentiment": self.sentiment_data,
             "credibility": self.credibility_data,
             "fact_check": self.fact_check_data,
+            "explainability": self.explainability_data,
             "article_info": self.article_info,
             "analyzed_text": self.analyzed_text,
         }

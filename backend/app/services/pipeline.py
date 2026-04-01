@@ -7,6 +7,7 @@ from .sentiment import analyze_sentiment
 from .credibility import check_credibility, check_credibility_from_domain
 from .scraper import scrape_article
 from .fact_checker import check_facts
+from .explainer import generate_lime_explanation
 
 
 # Weighted scoring formula
@@ -73,6 +74,9 @@ async def run_pipeline(
     fact_query = text_to_analyze[:200] if input_type != "claim" else content
     fact_check = await check_facts(fact_query)
 
+    # 5. Explainability (LIME word-level importance)
+    explainability = generate_lime_explanation(text_to_analyze, classifiers)
+
     # Calculate weighted final score (0-100, higher = more likely fake)
     final_score = _calculate_final_score(
         classification, sentiment, credibility, fact_check
@@ -119,6 +123,12 @@ async def run_pipeline(
             "matches": fact_check.get("matches", []),
             "fact_check_score": fact_check["fact_check_score"],
             "api_available": fact_check.get("api_available", False),
+        },
+        "explainability": {
+            "highlights": explainability.get("highlights", []),
+            "explanation": None,  # Populated by Claude API in task 2
+            "method": explainability.get("method", "lime"),
+            "available": explainability.get("available", False),
         },
         # Scraped article info (if applicable)
         "article_info": {
