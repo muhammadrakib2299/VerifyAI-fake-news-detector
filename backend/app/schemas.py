@@ -139,6 +139,30 @@ class FeedbackResponse(BaseModel):
     created_at: Optional[str] = None
 
 
+class VerdictCount(BaseModel):
+    verdict: str
+    count: int
+
+
+class TrendPoint(BaseModel):
+    date: str
+    count: int
+
+
+class FlaggedSource(BaseModel):
+    domain: str
+    count: int
+    avg_score: float
+
+
+class StatsResponse(BaseModel):
+    total_analyses: int
+    verdict_distribution: list[VerdictCount]
+    trends: list[TrendPoint]
+    recent_analyses: list[AnalysisSummary]
+    flagged_sources: list[FlaggedSource]
+
+
 class HealthResponse(BaseModel):
     status: str = "healthy"
     model_loaded: bool = False

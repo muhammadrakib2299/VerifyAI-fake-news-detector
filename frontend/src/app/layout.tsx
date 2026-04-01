@@ -49,6 +49,12 @@ export default function RootLayout({
               >
                 History
               </a>
+              <a
+                href="/dashboard"
+                className="hover:text-foreground transition-colors"
+              >
+                Dashboard
+              </a>
             </nav>
           </div>
         </header>

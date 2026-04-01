@@ -1,7 +1,9 @@
 """Analysis endpoints — full pipeline with DB persistence."""
 
 import math
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, HTTPException, Depends, Query
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from ..schemas import (
     AnalyzeRequest, AnalyzeResponse, AnalysisSummary,
@@ -9,6 +11,7 @@ from ..schemas import (
     ClassificationResult, SentimentResult, CredibilityResult,
     FactCheckResult, FactCheckMatch, ArticleInfo,
     ExplainabilityResult, Highlight,
+    StatsResponse, VerdictCount, TrendPoint, FlaggedSource,
 )
 from ..dependencies import get_classifier
 from ..database import get_db
@@ -144,6 +147,89 @@ async def submit_feedback(
         user_verdict=feedback.user_verdict,
         comment=feedback.comment,
         created_at=feedback.created_at.isoformat() if feedback.created_at else None,
+    )
+
+
+@router.get("/stats", response_model=StatsResponse)
+async def get_stats(db: Session = Depends(get_db)):
+    """Get aggregate dashboard statistics."""
+    # Total analyses
+    total = db.query(func.count(Analysis.id)).scalar() or 0
+
+    # Verdict distribution
+    verdict_rows = (
+        db.query(Analysis.verdict, func.count(Analysis.id))
+        .group_by(Analysis.verdict)
+        .all()
+    )
+    verdict_distribution = [
+        VerdictCount(verdict=v, count=c) for v, c in verdict_rows
+    ]
+
+    # Trends — daily counts for the last 30 days
+    thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+    trend_rows = (
+        db.query(
+            func.date(Analysis.created_at).label("date"),
+            func.count(Analysis.id).label("count"),
+        )
+        .filter(Analysis.created_at >= thirty_days_ago)
+        .group_by(func.date(Analysis.created_at))
+        .order_by(func.date(Analysis.created_at))
+        .all()
+    )
+    trends = [TrendPoint(date=str(row.date), count=row.count) for row in trend_rows]
+
+    # Recent analyses (last 5)
+    recent = (
+        db.query(Analysis)
+        .order_by(Analysis.created_at.desc())
+        .limit(5)
+        .all()
+    )
+    recent_analyses = [
+        AnalysisSummary(
+            id=a.id,
+            verdict=a.verdict,
+            confidence=a.confidence,
+            final_score=a.final_score,
+            input_type=a.input_type,
+            input_text=a.input_text[:200],
+            model_used=a.model_used,
+            created_at=a.created_at.isoformat() if a.created_at else None,
+        )
+        for a in recent
+    ]
+
+    # Most flagged sources — domains with highest avg fake scores
+    flagged_rows = (
+        db.query(
+            Analysis.source_url,
+            func.count(Analysis.id).label("count"),
+            func.avg(Analysis.final_score).label("avg_score"),
+        )
+        .filter(Analysis.source_url.isnot(None))
+        .group_by(Analysis.source_url)
+        .having(func.count(Analysis.id) >= 1)
+        .order_by(func.avg(Analysis.final_score).desc())
+        .limit(10)
+        .all()
+    )
+    flagged_sources = []
+    for row in flagged_rows:
+        # Extract domain from URL
+        url = row[0] or ""
+        domain = url.split("//")[-1].split("/")[0].replace("www.", "") if url else "unknown"
+        flagged_sources.append(
+            FlaggedSource(domain=domain, count=row[1], avg_score=round(float(row[2]), 1))
+        )
+
+    return StatsResponse(
+        total_analyses=total,
+        verdict_distribution=verdict_distribution,
+        trends=trends,
+        recent_analyses=recent_analyses,
+        flagged_sources=flagged_sources,
     )
 
 

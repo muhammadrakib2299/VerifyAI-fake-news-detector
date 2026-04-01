@@ -106,6 +106,30 @@ export interface HistoryResponse {
   total_pages: number;
 }
 
+export interface VerdictCount {
+  verdict: string;
+  count: number;
+}
+
+export interface TrendPoint {
+  date: string;
+  count: number;
+}
+
+export interface FlaggedSource {
+  domain: string;
+  count: number;
+  avg_score: number;
+}
+
+export interface StatsResponse {
+  total_analyses: number;
+  verdict_distribution: VerdictCount[];
+  trends: TrendPoint[];
+  recent_analyses: AnalysisSummary[];
+  flagged_sources: FlaggedSource[];
+}
+
 export async function analyzeContent(
   request: AnalyzeRequest
 ): Promise<AnalyzeResponse> {
@@ -145,6 +169,16 @@ export async function getHistory(
   if (verdict) params.set("verdict", verdict);
 
   const res = await fetch(`${API_BASE}/history?${params}`);
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function getStats(): Promise<StatsResponse> {
+  const res = await fetch(`${API_BASE}/stats`);
 
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}`);
