@@ -57,9 +57,11 @@ def detect_clickbait(headline: str | None, body: str) -> dict:
     # 1. Semantic similarity between headline and body
     similarity = _cosine_similarity_tfidf(headline, body)
 
-    # Mismatch: lower similarity = higher mismatch
+    # Mismatch: lower similarity = higher mismatch.
     # Typical article: similarity 0.05-0.3 (headline reuses some body terms)
     # Clickbait: similarity < 0.02 (headline unrelated to body)
+    # The 5x scaling maps the 0-0.2 similarity range to 0-100 mismatch:
+    #   similarity=0.0 → mismatch=100, similarity=0.2 → mismatch=0
     mismatch_score = max(0, min(100, (1 - similarity * 5) * 100))
 
     # 2. Clickbait language patterns in headline
@@ -74,7 +76,10 @@ def detect_clickbait(headline: str | None, body: str) -> dict:
     # 3. Headline style signals
     style_score = _check_headline_style(headline)
 
-    # Combined clickbait score (0-1)
+    # Combined clickbait score (0-1):
+    # Semantic mismatch weighted highest (45%) since it's the strongest signal.
+    # Language patterns (30%) catch explicit clickbait phrases.
+    # Style (25%) catches formatting cues (caps, punctuation, questions).
     clickbait_score = (
         0.45 * (mismatch_score / 100)  # Semantic mismatch
         + 0.30 * pattern_score            # Clickbait language
@@ -154,7 +159,8 @@ def _cosine_similarity_tfidf(text_a: str, text_b: str) -> float:
     vec_a = {}
     vec_b = {}
     for word in vocab:
-        idf = math.log(2.0 / doc_count[word]) + 1  # smoothed IDF
+        # Smoothed IDF: +1 prevents zero IDF for words in both docs
+        idf = math.log(2.0 / doc_count[word]) + 1
         vec_a[word] = (tf_a.get(word, 0) / len(tokens_a)) * idf
         vec_b[word] = (tf_b.get(word, 0) / len(tokens_b)) * idf
 

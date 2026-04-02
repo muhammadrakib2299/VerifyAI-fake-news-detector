@@ -33,7 +33,9 @@ def generate_lime_explanation(
         Dict with highlights (word importances) and summary stats.
     """
     try:
-        # LIME needs a function that takes a list of texts -> probability array
+        # LIME requires a predict_fn(list[str]) -> ndarray(n, 2) interface.
+        # It generates perturbed versions of the input text by randomly removing
+        # words, then observes how predictions change to assign word importance.
         def predict_fn(texts: list[str]) -> np.ndarray:
             results = []
             for t in texts:
@@ -51,6 +53,8 @@ def generate_lime_explanation(
         # Extract word-level importances
         word_importances = explanation.as_list()
 
+        # LIME weights: positive = contributes toward class 1 (Fake),
+        # negative = contributes toward class 0 (Real)
         highlights = []
         for word, weight in word_importances:
             highlights.append({

@@ -87,10 +87,12 @@ def _detect_by_script(text: str) -> dict | None:
     script_counts = Counter()
     total_chars = 0
 
+    # Count non-ASCII characters that fall within known Unicode script ranges.
+    # Each script range maps to a language (e.g., 0x0600-0x06FF → Arabic).
     for char in text:
         code = ord(char)
         if code < 128:
-            continue  # Skip ASCII
+            continue  # Skip ASCII (handled by word-frequency method)
         total_chars += 1
         for lang, ranges in SCRIPT_RANGES.items():
             for start, end in ranges:
@@ -134,6 +136,7 @@ def _detect_by_words(text: str) -> dict:
     for lang, markers in LANGUAGE_MARKERS.items():
         if not markers:
             continue
+        # Score = fraction of known markers found in the text
         overlap = words & markers
         scores[lang] = len(overlap) / len(markers) if markers else 0
 
@@ -160,6 +163,7 @@ def _detect_by_words(text: str) -> dict:
     return {
         "code": best_lang,
         "name": LANGUAGE_NAMES.get(best_lang, best_lang),
+        # Scale up confidence: a 0.33 marker hit rate → 0.95 confidence (3x multiplier)
         "confidence": round(min(0.95, best_score * 3), 3),
         "method": "word_frequency",
     }

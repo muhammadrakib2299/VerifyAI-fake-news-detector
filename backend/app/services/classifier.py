@@ -33,6 +33,8 @@ class RoBERTaClassifier:
         real_prob = float(probabilities[0])
         fake_prob = float(probabilities[1])
 
+        # Verdict thresholds: >=0.65 fake prob → Fake, 0.35-0.65 → Misleading, <0.35 → Real
+        # These thresholds create a "Misleading" buffer zone to avoid binary extremes
         if fake_prob >= 0.65:
             verdict = "Fake"
         elif fake_prob >= 0.35:
@@ -158,7 +160,8 @@ def load_classifiers() -> dict:
         except Exception as e:
             print(f"WARNING: Failed to load XLM-RoBERTa model: {e}")
 
-    # If no RoBERTa, promote baseline to primary
+    # If RoBERTa unavailable (e.g., weights not downloaded), promote baseline to primary
+    # so classify_text() always has a primary model to call without special-casing
     if classifiers["primary"] is None and classifiers["fallback"] is not None:
         classifiers["primary"] = classifiers["fallback"]
         print("Using baseline model as primary (RoBERTa not available)")

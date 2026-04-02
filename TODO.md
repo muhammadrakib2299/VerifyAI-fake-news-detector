@@ -153,12 +153,12 @@
 ---
 
 ## Documentation
-- [ ] Write comprehensive README.md
-- [ ] Add API documentation examples
+- [x] Write comprehensive README.md
+- [x] Add API documentation examples
 - [ ] Add screenshots/GIFs to README
-- [ ] Document model training process in notebooks
-- [ ] Add inline code comments where needed
-- [ ] Write CONTRIBUTING.md (optional)
+- [x] Document model training process in notebooks
+- [x] Add inline code comments where needed
+- [x] Write CONTRIBUTING.md (optional)
 
 ---
 
@@ -171,5 +171,5 @@
 | Phase 3 — Polish & Explainability | Complete | 18/18 |
 | Phase 4 — Bonus | Complete | 14/14 |
 | Deployment | In Progress | 5/7 |
-| Documentation | Not Started | 0/6 |
-| **Total** | **In Progress** | **82/90** |
+| Documentation | In Progress | 5/6 |
+| **Total** | **In Progress** | **87/90** |
