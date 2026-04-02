@@ -108,7 +108,7 @@
 
 ### UI Polish
 - [x] Implement dark mode toggle
-- [ ] Add page transitions and loading animations
+- [x] Add page transitions and loading animations
 - [ ] Finalize mobile responsive design
 - [ ] Add meta tags + Open Graph tags
 - [ ] Create 404 and error pages

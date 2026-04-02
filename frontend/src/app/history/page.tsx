@@ -28,7 +28,7 @@ export default function HistoryPage() {
   }, [page, filter, session]);
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="mx-auto max-w-4xl px-6 py-10 page-enter">
       <h1 className="text-2xl font-bold mb-6">Analysis History</h1>
 
       {/* Filters */}

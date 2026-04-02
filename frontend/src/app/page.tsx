@@ -62,7 +62,7 @@ export default function Home() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
+    <div className="mx-auto max-w-3xl px-6 py-16 page-enter">
       {/* Hero */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">
@@ -171,7 +171,7 @@ export default function Home() {
       </form>
 
       {/* Features */}
-      <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 gap-6 card-stagger">
         {[
           {
             title: "AI Classification",

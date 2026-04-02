@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function SignInPage() {
   return (
-    <div className="mx-auto max-w-md px-6 py-20">
+    <div className="mx-auto max-w-md px-6 py-20 page-enter">
       <div className="text-center mb-8">
         <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-lg mb-4">
           V
