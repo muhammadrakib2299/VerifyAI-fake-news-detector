@@ -30,9 +30,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return true;
     },
+    jwt({ token, user }) {
+      if (user) {
+        token.picture = user.image;
+      }
+      return token;
+    },
     session({ session, token }) {
       if (token.sub) {
         session.user.id = token.sub;
+      }
+      if (token.picture) {
+        session.user.image = token.picture as string;
       }
       return session;
     },
