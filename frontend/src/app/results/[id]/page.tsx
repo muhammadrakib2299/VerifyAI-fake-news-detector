@@ -9,6 +9,7 @@ import { SentimentDisplay } from "@/components/sentiment-display";
 import { CredibilityBadge } from "@/components/credibility-badge";
 import { FactCheckSection } from "@/components/fact-check-section";
 import { ExplainabilityReport } from "@/components/explainability-report";
+import { ClickbaitDisplay } from "@/components/clickbait-display";
 import { Button } from "@/components/ui/button";
 
 export default function ResultsPage() {
@@ -101,6 +102,13 @@ export default function ResultsPage() {
       {result.fact_check.has_matches && (
         <div className="mt-8">
           <FactCheckSection factCheck={result.fact_check} />
+        </div>
+      )}
+
+      {/* Clickbait Analysis */}
+      {result.clickbait?.available && (
+        <div className="mt-8">
+          <ClickbaitDisplay clickbait={result.clickbait} />
         </div>
       )}
 

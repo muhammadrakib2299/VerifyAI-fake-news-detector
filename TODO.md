@@ -125,9 +125,9 @@
 - [x] Connect to FastAPI backend
 
 ### Clickbait Detector
-- [ ] Implement headline vs body semantic comparison
-- [ ] Score headline-content mismatch
-- [ ] Add as signal in analysis results
+- [x] Implement headline vs body semantic comparison
+- [x] Score headline-content mismatch
+- [x] Add as signal in analysis results
 
 ### Model Comparison Page
 - [ ] Build comparison page in frontend

@@ -71,6 +71,15 @@ export interface ExplainabilityResult {
   available: boolean;
 }
 
+export interface ClickbaitResult {
+  available: boolean;
+  mismatch_score: number;
+  clickbait_score: number;
+  pattern_matches: string[];
+  similarity: number | null;
+  headline: string | null;
+}
+
 export interface AnalyzeResponse {
   id: string;
   verdict: "Real" | "Misleading" | "Fake";
@@ -87,6 +96,7 @@ export interface AnalyzeResponse {
   fact_check: FactCheckResult;
   article_info: ArticleInfo | null;
   explainability: ExplainabilityResult | null;
+  clickbait: ClickbaitResult | null;
 }
 
 export interface AnalysisSummary {

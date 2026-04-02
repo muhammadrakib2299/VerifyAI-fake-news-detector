@@ -8,6 +8,7 @@ from .credibility import check_credibility, check_credibility_from_domain
 from .scraper import scrape_article
 from .fact_checker import check_facts
 from .explainer import generate_lime_explanation, generate_claude_explanation
+from .clickbait import detect_clickbait
 
 
 # Weighted scoring formula
@@ -55,6 +56,10 @@ async def run_pipeline(
         else:
             # Fall back to analyzing the URL string itself
             text_to_analyze = content
+
+    # 0. Clickbait detection (if we have a headline from scraping)
+    headline = scrape_result["title"] if scrape_result and scrape_result.get("title") else None
+    clickbait = detect_clickbait(headline, text_to_analyze)
 
     # 1. Classification
     classification = classify_text(classifiers, text_to_analyze)
@@ -142,6 +147,7 @@ async def run_pipeline(
             "method": explainability.get("method", "lime"),
             "available": explainability.get("available", False),
         },
+        "clickbait": clickbait,
         # Scraped article info (if applicable)
         "article_info": {
             "title": scrape_result["title"] if scrape_result else None,

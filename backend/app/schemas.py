@@ -101,6 +101,15 @@ class ExplainabilityResult(BaseModel):
     available: bool = False
 
 
+class ClickbaitResult(BaseModel):
+    available: bool = False
+    mismatch_score: float = Field(0, description="Headline-body mismatch score 0-100")
+    clickbait_score: float = Field(0, description="Overall clickbait score 0-1")
+    pattern_matches: list[str] = Field([], description="Clickbait patterns found in headline")
+    similarity: Optional[float] = Field(None, description="TF-IDF cosine similarity")
+    headline: Optional[str] = None
+
+
 # --- Main response ---
 
 class AnalyzeResponse(BaseModel):
@@ -121,6 +130,7 @@ class AnalyzeResponse(BaseModel):
     fact_check: FactCheckResult
     article_info: Optional[ArticleInfo] = None
     explainability: Optional[ExplainabilityResult] = None
+    clickbait: Optional[ClickbaitResult] = None
 
 
 class AnalysisSummary(BaseModel):
