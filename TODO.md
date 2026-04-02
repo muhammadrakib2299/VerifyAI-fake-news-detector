@@ -110,7 +110,7 @@
 - [x] Implement dark mode toggle
 - [x] Add page transitions and loading animations
 - [x] Finalize mobile responsive design
-- [ ] Add meta tags + Open Graph tags
+- [x] Add meta tags + Open Graph tags
 - [ ] Create 404 and error pages
 - [ ] Verify Swagger docs at `/docs`
 

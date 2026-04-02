@@ -16,9 +16,41 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VerifyAI - AI-Powered Fake News Detector",
+  title: {
+    default: "VerifyAI - AI-Powered Fake News Detector",
+    template: "%s | VerifyAI",
+  },
   description:
     "Analyze news articles, claims, and URLs for misinformation using AI-powered multi-signal analysis including NLP classification, sentiment analysis, source credibility, and fact-checking.",
+  keywords: [
+    "fake news detector",
+    "misinformation",
+    "fact checker",
+    "AI news analysis",
+    "RoBERTa",
+    "NLP",
+    "source credibility",
+    "sentiment analysis",
+  ],
+  authors: [{ name: "VerifyAI" }],
+  openGraph: {
+    title: "VerifyAI - AI-Powered Fake News Detector",
+    description:
+      "Detect fake news with multi-signal AI analysis: NLP classification, sentiment analysis, source credibility scoring, and real-time fact-checking.",
+    type: "website",
+    siteName: "VerifyAI",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VerifyAI - AI-Powered Fake News Detector",
+    description:
+      "Detect fake news with multi-signal AI analysis: NLP classification, sentiment analysis, source credibility scoring, and real-time fact-checking.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
