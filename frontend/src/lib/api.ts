@@ -71,6 +71,13 @@ export interface ExplainabilityResult {
   available: boolean;
 }
 
+export interface LanguageResult {
+  code: string;
+  name: string;
+  confidence: number;
+  method: string;
+}
+
 export interface ClickbaitResult {
   available: boolean;
   mismatch_score: number;
@@ -97,6 +104,7 @@ export interface AnalyzeResponse {
   article_info: ArticleInfo | null;
   explainability: ExplainabilityResult | null;
   clickbait: ClickbaitResult | null;
+  language: LanguageResult | null;
 }
 
 export interface AnalysisSummary {

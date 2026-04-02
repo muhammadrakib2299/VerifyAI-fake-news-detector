@@ -135,9 +135,9 @@
 - [x] Display inference time comparisons
 
 ### Multilingual
-- [ ] Integrate XLM-RoBERTa for multilingual classification
-- [ ] Add language auto-detection
-- [ ] Test with non-English articles
+- [x] Integrate XLM-RoBERTa for multilingual classification
+- [x] Add language auto-detection
+- [x] Test with non-English articles
 
 ---
 
@@ -169,7 +169,7 @@
 | Phase 1 — Foundation & ML | Complete | 22/22 |
 | Phase 2 — Core Features | Complete | 23/23 |
 | Phase 3 — Polish & Explainability | Complete | 18/18 |
-| Phase 4 — Bonus | Not Started | 0/11 |
+| Phase 4 — Bonus | Complete | 14/14 |
 | Deployment | Not Started | 0/7 |
 | Documentation | Not Started | 0/6 |
-| **Total** | **In Progress** | **63/87** |
+| **Total** | **In Progress** | **77/87** |

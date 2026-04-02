@@ -9,6 +9,7 @@ from .scraper import scrape_article
 from .fact_checker import check_facts
 from .explainer import generate_lime_explanation, generate_claude_explanation
 from .clickbait import detect_clickbait
+from .language import detect_language
 
 
 # Weighted scoring formula
@@ -57,12 +58,18 @@ async def run_pipeline(
             # Fall back to analyzing the URL string itself
             text_to_analyze = content
 
-    # 0. Clickbait detection (if we have a headline from scraping)
+    # 0a. Language detection
+    language = detect_language(text_to_analyze)
+
+    # 0b. Clickbait detection (if we have a headline from scraping)
     headline = scrape_result["title"] if scrape_result and scrape_result.get("title") else None
     clickbait = detect_clickbait(headline, text_to_analyze)
 
-    # 1. Classification
-    classification = classify_text(classifiers, text_to_analyze)
+    # 1. Classification (use multilingual model for non-English if available)
+    if language["code"] != "en" and classifiers.get("multilingual") is not None:
+        classification = classifiers["multilingual"].predict(text_to_analyze)
+    else:
+        classification = classify_text(classifiers, text_to_analyze)
 
     # 2. Sentiment analysis
     sentiment = analyze_sentiment(text_to_analyze)
@@ -148,6 +155,7 @@ async def run_pipeline(
             "available": explainability.get("available", False),
         },
         "clickbait": clickbait,
+        "language": language,
         # Scraped article info (if applicable)
         "article_info": {
             "title": scrape_result["title"] if scrape_result else None,

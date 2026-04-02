@@ -101,6 +101,13 @@ class ExplainabilityResult(BaseModel):
     available: bool = False
 
 
+class LanguageResult(BaseModel):
+    code: str = Field("en", description="ISO 639-1 language code")
+    name: str = Field("English", description="Human-readable language name")
+    confidence: float = Field(0.5, description="Detection confidence 0-1")
+    method: str = Field("default", description="Detection method used")
+
+
 class ClickbaitResult(BaseModel):
     available: bool = False
     mismatch_score: float = Field(0, description="Headline-body mismatch score 0-100")
@@ -131,6 +138,7 @@ class AnalyzeResponse(BaseModel):
     article_info: Optional[ArticleInfo] = None
     explainability: Optional[ExplainabilityResult] = None
     clickbait: Optional[ClickbaitResult] = None
+    language: Optional[LanguageResult] = None
 
 
 class AnalysisSummary(BaseModel):

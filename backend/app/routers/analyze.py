@@ -11,7 +11,7 @@ from ..schemas import (
     HistoryResponse, FeedbackRequest, FeedbackResponse,
     ClassificationResult, SentimentResult, CredibilityResult,
     FactCheckResult, FactCheckMatch, ArticleInfo,
-    ExplainabilityResult, Highlight, ClickbaitResult,
+    ExplainabilityResult, Highlight, ClickbaitResult, LanguageResult,
     CompareResponse, ModelResult,
     StatsResponse, VerdictCount, TrendPoint, FlaggedSource,
 )
@@ -70,6 +70,7 @@ async def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)):
             fact_check_data=result["fact_check"],
             explainability_data=result.get("explainability"),
             clickbait_data=result.get("clickbait"),
+            language_data=result.get("language"),
             article_info=result.get("article_info"),
             analyzed_text=result.get("analyzed_text"),
         )
@@ -362,6 +363,7 @@ def _build_response(result: dict) -> AnalyzeResponse:
         article_info=ArticleInfo(**result["article_info"]) if result.get("article_info") else None,
         explainability=_build_explainability(result.get("explainability")),
         clickbait=ClickbaitResult(**result["clickbait"]) if result.get("clickbait") else None,
+        language=LanguageResult(**result["language"]) if result.get("language") else None,
     )
 
 
@@ -386,6 +388,7 @@ def _build_response_from_db(analysis: Analysis) -> AnalyzeResponse:
     expl = analysis.explainability_data or {}
     art = analysis.article_info or {}
     cb = analysis.clickbait_data or {}
+    lang = getattr(analysis, 'language_data', None) or {}
 
     return AnalyzeResponse(
         id=analysis.id,
@@ -428,4 +431,5 @@ def _build_response_from_db(analysis: Analysis) -> AnalyzeResponse:
         article_info=ArticleInfo(**art) if art and art.get("title") else None,
         explainability=_build_explainability(expl if expl else None),
         clickbait=ClickbaitResult(**cb) if cb and cb.get("available") else None,
+        language=LanguageResult(**lang) if lang and lang.get("code") else None,
     )

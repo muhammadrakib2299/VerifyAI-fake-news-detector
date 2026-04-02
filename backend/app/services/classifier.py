@@ -77,13 +77,59 @@ class BaselineClassifier:
         }
 
 
+class XLMRoBERTaClassifier:
+    """Multilingual XLM-RoBERTa model for fake news classification.
+
+    Falls back to RoBERTa if XLM-RoBERTa model is not available.
+    """
+
+    def __init__(self, model_path: str):
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.tokenizer = RobertaTokenizer.from_pretrained(model_path)
+        self.model = RobertaForSequenceClassification.from_pretrained(model_path)
+        self.model.to(self.device)
+        self.model.eval()
+
+    def predict(self, text: str) -> dict:
+        """Classify text as real or fake using XLM-RoBERTa."""
+        inputs = self.tokenizer(
+            text,
+            padding="max_length",
+            truncation=True,
+            max_length=256,
+            return_tensors="pt",
+        ).to(self.device)
+
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+            probabilities = torch.softmax(outputs.logits, dim=1)[0]
+
+        real_prob = float(probabilities[0])
+        fake_prob = float(probabilities[1])
+
+        if fake_prob >= 0.65:
+            verdict = "Fake"
+        elif fake_prob >= 0.35:
+            verdict = "Misleading"
+        else:
+            verdict = "Real"
+
+        return {
+            "verdict": verdict,
+            "confidence": max(fake_prob, real_prob),
+            "fake_probability": fake_prob,
+            "real_probability": real_prob,
+            "model": "xlm-roberta",
+        }
+
+
 def load_classifiers() -> dict:
     """Load all available classifiers.
 
-    Returns dict with 'primary' and 'fallback' classifier instances.
+    Returns dict with 'primary', 'fallback', and 'multilingual' classifier instances.
     """
     ml_dir = Path(__file__).parent.parent.parent / "ml" / "models"
-    classifiers = {"primary": None, "fallback": None}
+    classifiers = {"primary": None, "fallback": None, "multilingual": None}
 
     # Try loading RoBERTa (primary)
     roberta_path = ml_dir / "roberta-fakenews"
@@ -102,6 +148,15 @@ def load_classifiers() -> dict:
             print(f"Baseline model loaded from {baseline_path}")
         except Exception as e:
             print(f"WARNING: Failed to load baseline model: {e}")
+
+    # Try loading XLM-RoBERTa (multilingual)
+    xlm_path = ml_dir / "xlm-roberta-fakenews"
+    if xlm_path.exists() and (xlm_path / "config.json").exists():
+        try:
+            classifiers["multilingual"] = XLMRoBERTaClassifier(str(xlm_path))
+            print(f"XLM-RoBERTa model loaded from {xlm_path}")
+        except Exception as e:
+            print(f"WARNING: Failed to load XLM-RoBERTa model: {e}")
 
     # If no RoBERTa, promote baseline to primary
     if classifiers["primary"] is None and classifiers["fallback"] is not None:

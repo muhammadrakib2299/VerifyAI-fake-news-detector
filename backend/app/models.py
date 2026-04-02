@@ -36,6 +36,7 @@ class Analysis(Base):
     fact_check_data = Column(JSON, nullable=True)
     explainability_data = Column(JSON, nullable=True)
     clickbait_data = Column(JSON, nullable=True)
+    language_data = Column(JSON, nullable=True)
     article_info = Column(JSON, nullable=True)
 
     # Analyzed text (may differ from input if URL was scraped)
