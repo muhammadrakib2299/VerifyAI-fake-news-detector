@@ -204,6 +204,38 @@ export async function getStats(userEmail?: string): Promise<StatsResponse> {
   return res.json();
 }
 
+export interface ModelResult {
+  model_name: string;
+  verdict: string;
+  confidence: number;
+  fake_probability: number;
+  real_probability: number;
+  inference_time_ms: number;
+  available: boolean;
+}
+
+export interface CompareResponse {
+  input_text: string;
+  models: ModelResult[];
+}
+
+export async function compareModels(
+  request: AnalyzeRequest
+): Promise<CompareResponse> {
+  const res = await fetch(`${API_BASE}/compare`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ detail: "Comparison failed" }));
+    throw new Error(error.detail || `HTTP ${res.status}`);
+  }
+
+  return res.json();
+}
+
 export async function submitFeedback(
   analysisId: string,
   isCorrect: boolean,

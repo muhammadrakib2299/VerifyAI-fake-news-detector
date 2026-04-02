@@ -37,6 +37,12 @@ export function Header() {
             >
               Dashboard
             </a>
+            <a
+              href="/compare"
+              className="hover:text-foreground transition-colors"
+            >
+              Compare
+            </a>
           </nav>
           <ThemeToggle />
           <UserMenu />
@@ -107,6 +113,13 @@ export function Header() {
               onClick={() => setMobileOpen(false)}
             >
               Dashboard
+            </a>
+            <a
+              href="/compare"
+              className="py-2 text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setMobileOpen(false)}
+            >
+              Compare
             </a>
           </nav>
           <div className="border-t border-border pt-3">

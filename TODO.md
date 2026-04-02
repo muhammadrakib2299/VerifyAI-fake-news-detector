@@ -130,9 +130,9 @@
 - [x] Add as signal in analysis results
 
 ### Model Comparison Page
-- [ ] Build comparison page in frontend
-- [ ] Show side-by-side: RoBERTa vs LogReg vs Claude
-- [ ] Display inference time comparisons
+- [x] Build comparison page in frontend
+- [x] Show side-by-side: RoBERTa vs LogReg vs Claude
+- [x] Display inference time comparisons
 
 ### Multilingual
 - [ ] Integrate XLM-RoBERTa for multilingual classification

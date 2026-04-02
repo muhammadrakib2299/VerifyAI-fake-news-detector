@@ -1,6 +1,7 @@
 """Analysis endpoints — full pipeline with DB persistence."""
 
 import math
+import time
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlalchemy import func
@@ -11,6 +12,7 @@ from ..schemas import (
     ClassificationResult, SentimentResult, CredibilityResult,
     FactCheckResult, FactCheckMatch, ArticleInfo,
     ExplainabilityResult, Highlight, ClickbaitResult,
+    CompareResponse, ModelResult,
     StatsResponse, VerdictCount, TrendPoint, FlaggedSource,
 )
 from ..dependencies import get_classifier
@@ -279,6 +281,59 @@ async def get_stats(
         recent_analyses=recent_analyses,
         flagged_sources=flagged_sources,
     )
+
+
+@router.post(
+    "/compare",
+    response_model=CompareResponse,
+    summary="Compare models side-by-side",
+    response_description="Classification results from all available models with inference times",
+    tags=["Analysis"],
+)
+async def compare_models(request: AnalyzeRequest):
+    """Run the same text through all available models and compare results.
+
+    Returns classification from RoBERTa, TF-IDF baseline, and inference time for each.
+    """
+    classifiers = get_classifier()
+    if classifiers is None:
+        raise HTTPException(status_code=503, detail="No models loaded")
+
+    text = request.content
+    models: list[ModelResult] = []
+
+    # Run each available model
+    for name, key in [("RoBERTa (Fine-tuned)", "primary"), ("TF-IDF + Logistic Regression", "fallback")]:
+        clf = classifiers.get(key)
+        if clf is None:
+            models.append(ModelResult(
+                model_name=name, verdict="N/A", confidence=0,
+                fake_probability=0, real_probability=0,
+                inference_time_ms=0, available=False,
+            ))
+            continue
+
+        start = time.perf_counter()
+        try:
+            result = clf.predict(text)
+            elapsed = (time.perf_counter() - start) * 1000
+            models.append(ModelResult(
+                model_name=name,
+                verdict=result["verdict"],
+                confidence=round(result["confidence"], 4),
+                fake_probability=round(result["fake_probability"], 4),
+                real_probability=round(result["real_probability"], 4),
+                inference_time_ms=round(elapsed, 2),
+            ))
+        except Exception:
+            elapsed = (time.perf_counter() - start) * 1000
+            models.append(ModelResult(
+                model_name=name, verdict="Error", confidence=0,
+                fake_probability=0, real_probability=0,
+                inference_time_ms=round(elapsed, 2), available=False,
+            ))
+
+    return CompareResponse(input_text=text, models=models)
 
 
 def _build_response(result: dict) -> AnalyzeResponse:

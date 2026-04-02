@@ -186,6 +186,21 @@ class StatsResponse(BaseModel):
     flagged_sources: list[FlaggedSource]
 
 
+class ModelResult(BaseModel):
+    model_name: str = Field(..., description="Name of the model")
+    verdict: str
+    confidence: float
+    fake_probability: float
+    real_probability: float
+    inference_time_ms: float = Field(..., description="Inference time in milliseconds")
+    available: bool = True
+
+
+class CompareResponse(BaseModel):
+    input_text: str
+    models: list[ModelResult]
+
+
 class HealthResponse(BaseModel):
     status: str = "healthy"
     model_loaded: bool = False
