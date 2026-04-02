@@ -21,9 +21,23 @@ from ..services.pipeline import run_pipeline
 router = APIRouter()
 
 
-@router.post("/analyze", response_model=AnalyzeResponse)
+@router.post(
+    "/analyze",
+    response_model=AnalyzeResponse,
+    summary="Analyze content for fake news",
+    response_description="Complete analysis result with verdict, sub-scores, and explainability",
+)
 async def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)):
-    """Run full analysis pipeline on text, URL, or claim."""
+    """
+    Run the full multi-signal analysis pipeline on text, URL, or claim.
+
+    The pipeline includes:
+    - **RoBERTa classification** (45% weight) — deep learning fake/real prediction
+    - **Sentiment analysis** (20% weight) — sensationalism and emotional tone scoring
+    - **Source credibility** (20% weight) — domain reputation lookup against 520+ sources
+    - **Fact-checking** (15% weight) — Google Fact Check Tools API cross-reference
+    - **Explainability** — LIME word-level highlights + AI-generated explanation
+    """
     classifiers = get_classifier()
 
     if classifiers is None or classifiers.get("primary") is None:
@@ -66,9 +80,14 @@ async def analyze(request: AnalyzeRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 
 
-@router.get("/analyze/{analysis_id}", response_model=AnalyzeResponse)
+@router.get(
+    "/analyze/{analysis_id}",
+    response_model=AnalyzeResponse,
+    summary="Get analysis by ID",
+    response_description="Full analysis details including all sub-scores and explainability data",
+)
 async def get_analysis(analysis_id: str, db: Session = Depends(get_db)):
-    """Retrieve a past analysis by ID."""
+    """Retrieve a past analysis by its UUID."""
     analysis = db.query(Analysis).filter(Analysis.id == analysis_id).first()
     if not analysis:
         raise HTTPException(status_code=404, detail="Analysis not found")
@@ -76,7 +95,12 @@ async def get_analysis(analysis_id: str, db: Session = Depends(get_db)):
     return _build_response_from_db(analysis)
 
 
-@router.get("/history", response_model=HistoryResponse)
+@router.get(
+    "/history",
+    response_model=HistoryResponse,
+    summary="Browse analysis history",
+    response_description="Paginated list of past analyses with summary data",
+)
 async def get_history(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
@@ -84,7 +108,7 @@ async def get_history(
     user_email: str = Query(None, description="Filter by user email"),
     db: Session = Depends(get_db),
 ):
-    """Get analysis history with pagination."""
+    """Get paginated analysis history, optionally filtered by verdict and user."""
     query = db.query(Analysis)
 
     if user_email:
@@ -125,13 +149,18 @@ async def get_history(
     )
 
 
-@router.post("/feedback/{analysis_id}", response_model=FeedbackResponse)
+@router.post(
+    "/feedback/{analysis_id}",
+    response_model=FeedbackResponse,
+    summary="Submit feedback on an analysis",
+    response_description="Confirmed feedback record",
+)
 async def submit_feedback(
     analysis_id: str,
     request: FeedbackRequest,
     db: Session = Depends(get_db),
 ):
-    """Submit feedback on an analysis result."""
+    """Submit user feedback (correct/incorrect) on an analysis result for model improvement."""
     analysis = db.query(Analysis).filter(Analysis.id == analysis_id).first()
     if not analysis:
         raise HTTPException(status_code=404, detail="Analysis not found")
@@ -156,12 +185,17 @@ async def submit_feedback(
     )
 
 
-@router.get("/stats", response_model=StatsResponse)
+@router.get(
+    "/stats",
+    response_model=StatsResponse,
+    summary="Get dashboard statistics",
+    response_description="Aggregate statistics including verdict distribution, trends, and flagged sources",
+)
 async def get_stats(
     user_email: str = Query(None, description="Filter stats by user email"),
     db: Session = Depends(get_db),
 ):
-    """Get aggregate dashboard statistics."""
+    """Get aggregate dashboard statistics: verdict distribution, 30-day trends, recent analyses, and most flagged sources."""
     base_query = db.query(Analysis)
     if user_email:
         base_query = base_query.filter(Analysis.user_email == user_email)

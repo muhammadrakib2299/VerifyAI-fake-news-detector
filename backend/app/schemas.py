@@ -19,6 +19,17 @@ class AnalyzeRequest(BaseModel):
     user_id: Optional[str] = Field(None, description="Authenticated user ID")
     user_email: Optional[str] = Field(None, description="Authenticated user email")
 
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "content": "Breaking: Scientists discover that the earth is actually flat, according to a new study published in a non-peer-reviewed journal.",
+                    "input_type": "text",
+                }
+            ]
+        }
+    }
+
 
 class FeedbackRequest(BaseModel):
     is_correct: bool = Field(..., description="Whether the analysis verdict was correct")
@@ -169,4 +180,4 @@ class HealthResponse(BaseModel):
     status: str = "healthy"
     model_loaded: bool = False
     primary_model: Optional[str] = None
-    version: str = "0.2.0"
+    version: str = "0.3.0"

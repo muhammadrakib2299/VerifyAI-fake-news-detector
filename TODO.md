@@ -112,7 +112,7 @@
 - [x] Finalize mobile responsive design
 - [x] Add meta tags + Open Graph tags
 - [x] Create 404 and error pages
-- [ ] Verify Swagger docs at `/docs`
+- [x] Verify Swagger docs at `/docs`
 
 ---
 
@@ -168,8 +168,8 @@
 |-------|--------|----------|
 | Phase 1 — Foundation & ML | Complete | 22/22 |
 | Phase 2 — Core Features | Complete | 23/23 |
-| Phase 3 — Polish & Explainability | In Progress | 15/18 |
+| Phase 3 — Polish & Explainability | Complete | 18/18 |
 | Phase 4 — Bonus | Not Started | 0/11 |
 | Deployment | Not Started | 0/7 |
 | Documentation | Not Started | 0/6 |
-| **Total** | **In Progress** | **60/87** |
+| **Total** | **In Progress** | **63/87** |

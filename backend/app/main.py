@@ -19,9 +19,45 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="VerifyAI API",
-    description="AI-powered fake news detection API with multi-signal analysis",
-    version="0.2.0",
+    description="""
+## AI-Powered Fake News Detection API
+
+VerifyAI analyzes news articles, claims, and URLs using a **multi-signal analysis pipeline**:
+
+- **RoBERTa Classification** — Fine-tuned deep learning model (97%+ accuracy)
+- **Sentiment Analysis** — VADER sentiment scoring + sensationalism detection
+- **Source Credibility** — 520+ domain trust database lookup
+- **Fact-Checking** — Google Fact Check Tools API cross-referencing
+- **Explainability** — LIME word-level importance + Claude AI explanations
+
+### Verdict Scale
+| Score Range | Verdict |
+|------------|---------|
+| 0-30 | Real |
+| 30-65 | Misleading |
+| 65-100 | Fake |
+
+### Quick Start
+1. `POST /analyze` with text, URL, or claim
+2. `GET /analyze/{id}` to retrieve results
+3. `GET /history` to browse past analyses
+4. `GET /stats` for dashboard statistics
+""",
+    version="0.3.0",
     lifespan=lifespan,
+    license_info={
+        "name": "MIT",
+    },
+    openapi_tags=[
+        {
+            "name": "Analysis",
+            "description": "Run analyses, retrieve results, submit feedback, and view statistics.",
+        },
+        {
+            "name": "Health",
+            "description": "Service health checks and model status.",
+        },
+    ],
 )
 
 # CORS

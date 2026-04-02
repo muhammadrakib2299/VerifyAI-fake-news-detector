@@ -7,9 +7,14 @@ from ..dependencies import get_classifier
 router = APIRouter()
 
 
-@router.get("/health", response_model=HealthResponse)
+@router.get(
+    "/health",
+    response_model=HealthResponse,
+    summary="Service health check",
+    response_description="Current service status and loaded model info",
+)
 async def health():
-    """Return service health status."""
+    """Check if the API is healthy and which ML model is loaded."""
     classifiers = get_classifier()
     model_loaded = classifiers is not None and classifiers.get("primary") is not None
 
@@ -22,5 +27,5 @@ async def health():
         status="healthy",
         model_loaded=model_loaded,
         primary_model=primary_model,
-        version="0.2.0",
+        version="0.3.0",
     )
