@@ -109,7 +109,7 @@
 ### UI Polish
 - [x] Implement dark mode toggle
 - [x] Add page transitions and loading animations
-- [ ] Finalize mobile responsive design
+- [x] Finalize mobile responsive design
 - [ ] Add meta tags + Open Graph tags
 - [ ] Create 404 and error pages
 - [ ] Verify Swagger docs at `/docs`
