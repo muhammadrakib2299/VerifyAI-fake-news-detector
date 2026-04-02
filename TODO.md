@@ -119,10 +119,10 @@
 ## Phase 4 — Bonus (Optional)
 
 ### Chrome Extension
-- [ ] Create Manifest V3 extension scaffold
-- [ ] Build content script (adds "Verify" button to articles)
-- [ ] Build popup UI with quick verdict display
-- [ ] Connect to FastAPI backend
+- [x] Create Manifest V3 extension scaffold
+- [x] Build content script (adds "Verify" button to articles)
+- [x] Build popup UI with quick verdict display
+- [x] Connect to FastAPI backend
 
 ### Clickbait Detector
 - [ ] Implement headline vs body semantic comparison

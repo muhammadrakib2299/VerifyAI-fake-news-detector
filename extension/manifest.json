@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "VerifyAI - Fake News Detector",
+  "description": "Instantly analyze any article or text for misinformation using AI-powered multi-signal analysis.",
+  "version": "1.0.0",
+  "permissions": ["activeTab", "storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "host_permissions": ["http://localhost:8000/*"]
+}

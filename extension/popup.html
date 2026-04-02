@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">V</div>
+      <div>
+        <div class="title">VerifyAI</div>
+        <div class="subtitle">Fake News Detector</div>
+      </div>
+    </div>
+
+    <!-- Input Section -->
+    <div id="input-section">
+      <div class="tabs">
+        <button class="tab active" data-type="page">This Page</button>
+        <button class="tab" data-type="text">Paste Text</button>
+      </div>
+
+      <div id="text-input" class="hidden">
+        <textarea id="content-input" placeholder="Paste article text or a claim to analyze..." rows="4"></textarea>
+      </div>
+
+      <div id="page-info">
+        <p class="page-url" id="current-url">Loading current page...</p>
+      </div>
+
+      <button id="analyze-btn" class="btn-primary">Analyze</button>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading-section" class="hidden">
+      <div class="spinner"></div>
+      <p class="loading-text">Analyzing content...</p>
+      <p class="loading-sub">Running multi-signal analysis pipeline</p>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results-section" class="hidden">
+      <div id="verdict-card" class="verdict-card">
+        <div class="verdict-label" id="verdict-text">—</div>
+        <div class="verdict-score" id="verdict-score">—</div>
+      </div>
+
+      <div class="scores">
+        <div class="score-row">
+          <span class="score-label">AI Classification</span>
+          <div class="score-bar-track">
+            <div class="score-bar" id="bar-classification"></div>
+          </div>
+          <span class="score-value" id="val-classification">—</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Sensationalism</span>
+          <div class="score-bar-track">
+            <div class="score-bar" id="bar-sentiment"></div>
+          </div>
+          <span class="score-value" id="val-sentiment">—</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Source Credibility</span>
+          <div class="score-bar-track">
+            <div class="score-bar" id="bar-credibility"></div>
+          </div>
+          <span class="score-value" id="val-credibility">—</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Fact Check</span>
+          <div class="score-bar-track">
+            <div class="score-bar" id="bar-factcheck"></div>
+          </div>
+          <span class="score-value" id="val-factcheck">—</span>
+        </div>
+      </div>
+
+      <p class="explanation" id="explanation-text"></p>
+
+      <a id="full-results-link" class="btn-secondary" href="#" target="_blank">
+        View Full Report
+      </a>
+
+      <button id="back-btn" class="btn-ghost">Analyze Another</button>
+    </div>
+
+    <!-- Error Section -->
+    <div id="error-section" class="hidden">
+      <p class="error-text" id="error-message">Something went wrong.</p>
+      <button id="retry-btn" class="btn-secondary">Try Again</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <a href="http://localhost:3000" target="_blank">Open VerifyAI</a>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

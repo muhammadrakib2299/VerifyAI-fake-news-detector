@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><title>Generate VerifyAI Icons</title></head>
+<body>
+<p>Right-click each canvas and "Save Image As" to the icons/ folder.</p>
+<div id="canvases"></div>
+<script>
+const sizes = [16, 48, 128];
+const container = document.getElementById('canvases');
+sizes.forEach(size => {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  // Background
+  const r = size * 0.19;
+  ctx.beginPath();
+  ctx.roundRect(0, 0, size, size, r);
+  ctx.fillStyle = '#171717';
+  ctx.fill();
+  // Letter
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `bold ${size * 0.65}px system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('V', size / 2, size / 2 + size * 0.04);
+  // Label
+  const label = document.createElement('p');
+  label.textContent = `icon${size}.png`;
+  container.appendChild(label);
+  container.appendChild(canvas);
+});
+</script>
+</body>
+</html>
