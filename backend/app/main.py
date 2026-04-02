@@ -13,8 +13,14 @@ from .routers import analyze, health
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Create tables on startup, load models in background."""
-    create_tables()
-    # Load models in background so the port opens immediately
+    import logging
+    logger = logging.getLogger(__name__)
+    try:
+        await asyncio.get_event_loop().run_in_executor(None, create_tables)
+    except Exception as e:
+        logger.error("Failed to create tables after retries: %s", e)
+        # Don't crash — let the app start so health checks pass;
+        # requests that need the DB will fail individually.
     asyncio.get_event_loop().run_in_executor(None, load_model)
     yield
 
