@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { UserMenu } from "./user-menu";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
 
   return (
     <header className="border-b border-border">
@@ -25,18 +27,22 @@ export function Header() {
             <a href="/" className="hover:text-foreground transition-colors">
               Analyze
             </a>
-            <a
-              href="/history"
-              className="hover:text-foreground transition-colors"
-            >
-              History
-            </a>
-            <a
-              href="/dashboard"
-              className="hover:text-foreground transition-colors"
-            >
-              Dashboard
-            </a>
+            {session && (
+              <>
+                <a
+                  href="/history"
+                  className="hover:text-foreground transition-colors"
+                >
+                  History
+                </a>
+                <a
+                  href="/dashboard"
+                  className="hover:text-foreground transition-colors"
+                >
+                  Dashboard
+                </a>
+              </>
+            )}
             <a
               href="/compare"
               className="hover:text-foreground transition-colors"
@@ -100,20 +106,24 @@ export function Header() {
             >
               Analyze
             </a>
-            <a
-              href="/history"
-              className="py-2 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              History
-            </a>
-            <a
-              href="/dashboard"
-              className="py-2 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              Dashboard
-            </a>
+            {session && (
+              <>
+                <a
+                  href="/history"
+                  className="py-2 text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  History
+                </a>
+                <a
+                  href="/dashboard"
+                  className="py-2 text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Dashboard
+                </a>
+              </>
+            )}
             <a
               href="/compare"
               className="py-2 text-muted-foreground hover:text-foreground transition-colors"
