@@ -1,18 +1,24 @@
 """Explainability service — LIME word-level importance + Claude API explanations."""
 
 import numpy as np
-import anthropic
-from lime.lime_text import LimeTextExplainer
 from .classifier import classify_text
 from ..config import settings
 
 
-# Reusable LIME explainer instance
-_lime_explainer = LimeTextExplainer(
-    class_names=["Real", "Fake"],
-    split_expression=r"\W+",
-    bow=True,
-)
+# Lazy-initialized LIME explainer (lime imports sklearn internals which is slow)
+_lime_explainer = None
+
+
+def _get_lime_explainer():
+    global _lime_explainer
+    if _lime_explainer is None:
+        from lime.lime_text import LimeTextExplainer
+        _lime_explainer = LimeTextExplainer(
+            class_names=["Real", "Fake"],
+            split_expression=r"\W+",
+            bow=True,
+        )
+    return _lime_explainer
 
 
 def generate_lime_explanation(
@@ -43,7 +49,7 @@ def generate_lime_explanation(
                 results.append([pred["real_probability"], pred["fake_probability"]])
             return np.array(results)
 
-        explanation = _lime_explainer.explain_instance(
+        explanation = _get_lime_explainer().explain_instance(
             text,
             predict_fn,
             num_features=num_features,
@@ -115,6 +121,7 @@ async def generate_claude_explanation(
         return None
 
     try:
+        import anthropic
         client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
 
         # Build the top keywords summary from LIME highlights

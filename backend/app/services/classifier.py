@@ -1,15 +1,21 @@
 """News classification service — RoBERTa primary + TF-IDF baseline fallback."""
 
 import joblib
-import torch
 from pathlib import Path
-from transformers import RobertaTokenizer, RobertaForSequenceClassification
+
+# Lazy imports — torch and transformers are heavy (~30s on free tier).
+# Importing at module level blocks uvicorn from binding the port, causing
+# Render's port-scan to time out.  Import inside class __init__ instead.
+
 
 
 class RoBERTaClassifier:
     """Fine-tuned RoBERTa model for fake news classification."""
 
     def __init__(self, model_path: str):
+        import torch
+        from transformers import RobertaTokenizer, RobertaForSequenceClassification
+
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.tokenizer = RobertaTokenizer.from_pretrained(model_path)
         self.model = RobertaForSequenceClassification.from_pretrained(model_path)
@@ -18,6 +24,8 @@ class RoBERTaClassifier:
 
     def predict(self, text: str) -> dict:
         """Classify text as real or fake using RoBERTa."""
+        import torch
+
         inputs = self.tokenizer(
             text,
             padding="max_length",
@@ -86,6 +94,9 @@ class XLMRoBERTaClassifier:
     """
 
     def __init__(self, model_path: str):
+        import torch
+        from transformers import RobertaTokenizer, RobertaForSequenceClassification
+
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.tokenizer = RobertaTokenizer.from_pretrained(model_path)
         self.model = RobertaForSequenceClassification.from_pretrained(model_path)
@@ -94,6 +105,8 @@ class XLMRoBERTaClassifier:
 
     def predict(self, text: str) -> dict:
         """Classify text as real or fake using XLM-RoBERTa."""
+        import torch
+
         inputs = self.tokenizer(
             text,
             padding="max_length",
